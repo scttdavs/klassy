@@ -3,12 +3,19 @@
   else if (typeof module != 'undefined') module.exports = definition()
   else context[name] = definition()
 }('klassy', this, function () {
+
   var isStaticKey = function(key) {
     // we use $ because @ is not a valid identifier and would require quotes to use
     return key.indexOf('$') === 0;
   };
 
-  var extend = function(init, parent) {
+  extend = function(child, parent) { 
+    for (var key in parent) { 
+      if (parent.hasOwnProperty(key)) child[key] = parent[key]; 
+    }  
+  }
+
+  var extend = function(klass, parent, fromKlass) {
     var proto = {};
     
     for (var key in parent) {
@@ -16,20 +23,38 @@
         // direct property
         if (isStaticKey(key)) {
           var newKey = key.slice(1); // remove $
-          init[newKey] = parent[key]; // save static method on klass
+          klass[newKey] = parent[key]; // save static method on klass
+        } else if (fromKlass) {
+          
+          klass[key] = parent[key]; // save static method on klass
         } else {
+          console.log("HIT", key);
           // instance method, save on prototype
           proto[key] = parent[key];
         }
-      } else {
-        // found on prototype
-        proto[key] = parent[key]
       }
     }
 
-    init.prototype = proto;
+    if (fromKlass) {
+      function ctor() { 
+        this.constructor = klass; 
+      } 
 
-    return init;
+      for (var key in klass.prototype) {
+        if (klass.prototype.hasOwnProperty(key)) {
+          parent.prototype[key] = klass.prototype[key];
+        }
+      }
+
+      ctor.prototype = parent.prototype; 
+      klass.prototype = new ctor(); 
+      klass.__super__ = parent.prototype; 
+
+    } else {
+      klass.prototype = proto;
+    }
+
+    return klass;
   };
 
   var klass = function(options) {
@@ -45,6 +70,18 @@
     }
     // saves and removes static methods denoted with $
     init = extend(init, options);
+
+    init.extend = function curry(child) {
+      child = child || {};
+      if (!child.init) {
+        child.init = init;
+      }
+
+      var newKlass = klass(child);
+      console.log("INIT:", newKlass.prototype);
+
+      return extend(newKlass, init, true);
+    } 
 
     return init;
   };

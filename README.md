@@ -6,11 +6,11 @@ A bare bones vanilla js implementation of classes, influenced by coffeescript.
 
 ### Constructors
 
-Simply pass a method in with the name `constructor` and it will behave as expected:
+Simply pass a method in with the name `init` and it will behave as expected:
 
 ```js
 var Person = klassy({
-  constructor: function(name) {
+  init: function(name) {
     this.name = name;
   }
 });
@@ -25,7 +25,7 @@ Any method name beginning with `$` will be saved as a static method. This varies
 
 ```js
 var Person = klassy({
-  constructor: function(name) {
+  init: function(name) {
     this.name = name;
   },
   $talk: function() {

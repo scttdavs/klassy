@@ -1,0 +1,32 @@
+{
+  "name": "klassy",
+  "version": "0.1.0",
+  "description": "Bare bones vanilla js implementation of classes, influenced by coffeescript",
+  "main": "klassy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://scttdavs@github.com/scttdavs/klassy.git"
+  },
+  "keywords": [
+    "class",
+    "classes",
+    "klass",
+    "klassy"
+  ],
+  "author": "Scott Davis (scttdavs)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scttdavs/klassy/issues"
+  },
+  "homepage": "https://github.com/scttdavs/klassy#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "grunt": "^0.4.5",
+    "grunt-mocha-istanbul": "^3.0.1",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5"
+  }
+}

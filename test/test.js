@@ -89,10 +89,46 @@ describe("Klassy", function() {
 
     var lassie = new Dog("Lassie", "Collie");
 
-    console.log("LASSIE:", lassie.prototype);
     expect(Dog.say()).to.equal("animal");
     expect(lassie.say).to.be.undefined;
     expect(lassie.getName()).to.equal("Lassie");
     expect(lassie.getBreed()).to.equal("Collie");
+  });
+
+  it("should extend more than one klass", function() {
+    var Animal = klassy({
+      init: function(name) {
+        this.name = name;
+      },
+      $say: function() {
+        return "animal";
+      },
+      getName: function() {
+        return this.name;
+      }
+    });
+
+    var Dog = Animal.extend({
+      init: function(name, breed) {
+        this.name = name;
+        this.breed = breed;
+      },
+      getBreed: function() {
+        return this.breed;
+      }
+    });
+
+    var Bulldog = Dog.extend({
+      init: function(name) {
+        this.name = name;
+        this.breed = "Bulldog";
+      }
+    });
+
+    var george = new Bulldog("George");
+
+    expect(Bulldog.say()).to.equal("animal");
+    expect(george.getName()).to.equal("George");
+    expect(george.getBreed()).to.equal("Bulldog");
   });
 });

@@ -40,6 +40,37 @@ var bill = new Person('Bill');
 bill.talk() // error
 ```
 
+### Subclassing
+
+Subclassing multilple klasses is supported.
+
+```js
+var Animal = klassy({
+  $say: function() {
+    return "I'm an animal";
+  }
+});
+
+var Dog = Animal.extend({
+  init: function(breed) {
+    this.breed = breed;
+  },
+  getBreed: function() {
+    return this.breed;
+  }
+});
+
+var Bulldog = Dog.extend({
+  init: function() {
+    this.breed = "Bulldog";
+  }
+});
+
+var george = new Bulldog("George");
+george.getBreed() // Bulldog
+george.say() // I'm an animal
+```
+
 ## Testing
 
 You will need to install `grunt-cli` if you haven't already.

@@ -4,11 +4,11 @@ var chai = require("chai");
 var expect = chai.expect;
 var klassy = require("../klassy");
 
-describe("works", function() {
+describe("Klassy", function() {
 
   it("should create a klass", function() {
     var Person = klassy({
-      constructor: function(name) {
+      init: function(name) {
         this.name = name;
       },
       say: function() {
@@ -22,7 +22,7 @@ describe("works", function() {
 
   it("should save a static method", function() {
     var Person = klassy({
-      constructor: function(name) {
+      init: function(name) {
         this.name = name;
       },
       $say: function() {

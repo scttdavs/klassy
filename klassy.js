@@ -22,20 +22,21 @@
   };
 
   var klass = function(obj) {
-    var newKlass = obj.init;
+    obj = obj || {}
+    var constructor = obj.init;
 
-    if (newKlass) {
-      // delete init since this will be the prototype
+    if (constructor) {
+      // delete init since obj will be the prototype
       delete obj.init;
     }  else {
       // no init, so use a default
-      newKlass = function() {};
+      constructor = function() {};
     }
-    // saves and removes static methods denoted with @
-    saveStatic(obj, newKlass);
-    newKlass.prototype = obj;
+    // saves and removes static methods denoted with $
+    saveStatic(obj, constructor);
+    constructor.prototype = obj;
 
-    return newKlass;
+    return constructor;
   };
 
   return klass;

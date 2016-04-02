@@ -6,6 +6,14 @@ var klassy = require("../klassy");
 
 describe("Klassy", function() {
 
+  it("should create a default", function() {
+    var Person = klassy();
+    var bill = new Person();
+
+    expect(Person).to.be.a("function");
+    expect(bill).to.be.an("object");
+  });
+
   it("should create a klass", function() {
     var Person = klassy({
       init: function(name) {

@@ -16,8 +16,11 @@ describe("Klassy", function() {
 
   it("should create a klass", function() {
     var Person = klassy({
+      name: "Person",
       init: function(name) {
-        this.name = name;
+        if (name) {
+          this.name = name;
+        }
       },
       say: function() {
         return this.name;
@@ -25,7 +28,10 @@ describe("Klassy", function() {
     });
 
     var bill = new Person("Bill");
+    var person = new Person();
+    
     expect(bill.say()).to.equal("Bill");
+    expect(person.say()).to.equal("Person");
   });
 
   it("should save a static method", function() {

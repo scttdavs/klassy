@@ -38,12 +38,12 @@
 
       ctor.prototype = parent.prototype; 
       klass.prototype = new ctor(); 
-      klass.__super__ = parent.prototype; 
+      // klass.__super__ = parent.prototype; 
 
     } else {
       klass.prototype = proto;
     }
-
+    
     return klass;
   };
 

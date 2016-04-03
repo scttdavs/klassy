@@ -1,4 +1,4 @@
-"use strict";
+
 
 var chai = require("chai");
 var expect = chai.expect;
@@ -26,6 +26,7 @@ describe("Klassy", function() {
         return this.name;
       }
     });
+
 
     var bill = new Person("Bill");
     var person = new Person();
@@ -88,7 +89,7 @@ describe("Klassy", function() {
         this.name = name;
         this.breed = breed;
       },
-      getBreed: function() {
+      getName: function() {
         return this.breed;
       }
     });
@@ -97,8 +98,7 @@ describe("Klassy", function() {
 
     expect(Dog.say()).to.equal("animal");
     expect(lassie.say).to.be.undefined;
-    expect(lassie.getName()).to.equal("Lassie");
-    expect(lassie.getBreed()).to.equal("Collie");
+    expect(lassie.getName()).to.equal("Collie");
   });
 
   it("should extend more than one klass", function() {
@@ -136,5 +136,30 @@ describe("Klassy", function() {
     expect(Bulldog.say()).to.equal("animal");
     expect(george.getName()).to.equal("George");
     expect(george.getBreed()).to.equal("Bulldog");
+  });
+
+  it("should work with super", function() {
+    var Animal = klassy({
+      init: function(name) {
+        this.name = name;
+      },
+      $say: function() {
+        return "animal";
+      },
+      getName: function() {
+        return this.name;
+      }
+    });
+
+    var Dog = Animal.extend({
+      getName: function() {
+        return this.supr();
+      }
+    });
+
+    var george = new Dog("George");
+
+    //expect(Bulldog.say()).to.equal("animal");
+    expect(george.getName()).to.equal("George");
   });
 });

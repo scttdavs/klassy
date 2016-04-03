@@ -8,69 +8,100 @@
     return key.indexOf('$') === 0;
   };
 
-  var extend = function(klass, parent, fromKlass) {
-    var proto = {};
-    
-    for (var key in parent) {
-      if (parent.hasOwnProperty(key)) {
-        // direct property
-        if (isStaticKey(key)) {
-          var newKey = key.slice(1); // remove $
-          klass[newKey] = parent[key]; // save static method on klass
-        } else if (fromKlass) {
-          klass[key] = parent[key]; // save static method on klass
-        } else {
-          proto[key] = parent[key]; // instance method, save on prototype
-        }
-      }
+  var getStaticKey = function(key) {
+    if (isStaticKey(key)) {
+      return key.slice(1);
     }
-
-    if (fromKlass) {
-      function ctor() { 
-        this.constructor = klass; 
-      } 
-
-      for (var key in klass.prototype) {
-        if (klass.prototype.hasOwnProperty(key)) {
-          parent.prototype[key] = klass.prototype[key];
-        }
-      }
-
-      ctor.prototype = parent.prototype; 
-      klass.prototype = new ctor(); 
-      // klass.__super__ = parent.prototype; 
-
-    } else {
-      klass.prototype = proto;
-    }
-    
-    return klass;
-  };
-
-  var curryExtend = function(init) {
-    return function(child) {
-      child = child || {};
-      if (!child.init) {
-        child.init = init;
-      }
-
-      return extend(klass(child), init, true);
-    };
+    return key;
   }
 
-  var klass = function(options) {
-    options = options || {}
+  var isFunction = function(obj) {
+    return typeof obj === 'function';
+  }
+
+  var setName = function(fn, name) {
+    if(isFunction(fn)) {
+      fn._methodName = name;
+    }
+  }
+
+  var extendStatic = function(base, obj, fromParent) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        // direct property
+        if (isStaticKey(key) || fromParent) {
+          var newKey = getStaticKey(key);
+          base[newKey] = obj[key];
+          if (isStaticKey(key)) {
+            delete obj[key];
+          }
+        }
+      }
+    }
+  };
+
+  var extend = function(base, obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        // direct property
+        base[key] = obj[key];
+        setName(base[key], key);
+      }
+    }
+  };
+
+  var extendClass = function(parent) {
+    return function(options) {
+      return klass(options, parent);
+    }
+  }
+
+  var klass = function(options, parent) {
+    options = options || {};
     var init = options.init;
+    var proto = Object.create((parent && parent.prototype) || {});
 
     if (init) {
       // delete init since options will be the prototype
       delete options.init;
+    } else if (parent) {
+      init = parent;
     }  else {
       // no init, so use a default
       init = function() {};
     }
-    init = extend(init, options);
-    init.extend = curryExtend(init);
+    
+    extendStatic(init, options);
+    extend(proto, options);
+
+    if (parent) {
+      extendStatic(init, parent, true);
+    }
+
+    init.prototype = proto;
+    init.extend = extendClass(init);
+
+    Object.defineProperty(init.prototype, "supr", {
+      get: function get() {
+        console.log("CALLER", get.caller);
+        var impl = get.caller,
+          name = impl._methodName,
+          foundImpl = this[name] === impl,
+          proto = this;
+     
+        while (proto = Object.getPrototypeOf(proto)) {
+          if (!proto[name]) {
+            break;
+          } else if (proto[name] === impl) {
+            foundImpl = true;
+          } else if (foundImpl) {
+            return proto[name];
+          }
+        }
+     
+        if (!foundImpl) throw "`super` may not be called outside a method implementation";
+      }
+    });
 
     return init;
   };

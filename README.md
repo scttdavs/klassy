@@ -2,6 +2,20 @@
 
 A bare bones vanilla js implementation of classes, influenced by coffeescript.
 
+## Why?
+
+ES6 has classes, coffeescript and typescript have classes..
+
+Well, for many reasons this may still be useful 
+
+- Maybe your team would like to move to ES6 soon, but cannot due to browser concerns
+- or you cannot/do not want to transpile
+- or your team uses ES6 but only certain features
+- or you're concerned about ES6 performance
+- or you just really like ES5... 
+
+Either way, this provides a pretty consistent way to define classes in JS so that when the time comes to switch to ES6, or coffeescript, or typescript, it will be fairly easy to change and will not require refactoring code (much).
+
 ## Features
 
 ### Constructors
@@ -42,7 +56,7 @@ var Person = klassy({
 Person.talk() // Hi!
 
 var bill = new Person('Bill');
-bill.talk() // error
+bill.talk() // womp womp
 ```
 
 ### Subclassing
@@ -74,6 +88,32 @@ var Bulldog = Dog.extend({
 var george = new Bulldog("George");
 george.getBreed() // Bulldog
 george.say() // I'm an animal
+```
+
+### Super
+
+Call the super class' method with `super`.
+
+```js
+var Animal = klassy({
+  init: function(name) {
+    this.name = name;
+  },
+  getName: function() {
+    return this.name;
+  }
+});
+
+var Dog = Animal.extend();
+
+var Bulldog = Dog.extend({
+  getName: function() {
+    return this.super();
+  }
+});
+
+var george = new Bulldog("George");
+george.getName(); // George
 ```
 
 ## Testing

@@ -151,15 +151,17 @@ describe("Klassy", function() {
       }
     });
 
-    var Dog = Animal.extend({
+    var Dog = Animal.extend();
+
+    var Bulldog = Dog.extend({
       getName: function() {
-        return this.supr();
+        return this.super();
       }
     });
 
-    var george = new Dog("George");
+    var george = new Bulldog("George");
 
-    //expect(Bulldog.say()).to.equal("animal");
+    expect(Bulldog.say()).to.equal("animal");
     expect(george.getName()).to.equal("George");
   });
 });

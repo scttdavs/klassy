@@ -81,25 +81,22 @@
     init.prototype = proto;
     init.extend = extendClass(init);
 
-    Object.defineProperty(init.prototype, "supr", {
+    Object.defineProperty(init.prototype, "super", {
       get: function get() {
-        console.log("CALLER", get.caller);
-        var impl = get.caller,
-          name = impl._methodName,
-          foundImpl = this[name] === impl,
-          proto = this;
+        var impl = get.caller;
+        var name = impl._methodName;
+        var foundImpl = this[name] === impl;
+        var proto = this;        
      
         while (proto = Object.getPrototypeOf(proto)) {
           if (!proto[name]) {
-            break;
-          } else if (proto[name] === impl) {
-            foundImpl = true;
-          } else if (foundImpl) {
+            continue;
+          } else if (proto[name] && proto[name] !== impl) {
             return proto[name];
           }
         }
      
-        if (!foundImpl) throw "`super` may not be called outside a method implementation";
+        throw "`super` may not be called outside a method implementation";
       }
     });
 

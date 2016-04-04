@@ -1,18 +1,20 @@
 # Klassy
 
+[![Build Status](https://travis-ci.org/scttdavs/klassy.svg?branch=master)](https://travis-ci.org/scttdavs/klassy)
+
 A bare bones vanilla js implementation of classes, influenced by coffeescript.
 
 ## Why?
 
 ES6 has classes, coffeescript and typescript have classes..
 
-Well, for many reasons this may still be useful 
+Well, for many reasons this may still be useful
 
 - Maybe your team would like to move to ES6 soon, but cannot due to browser concerns
 - or you cannot/do not want to transpile
 - or your team uses ES6 but only certain features
 - or you're concerned about ES6 performance
-- or you just really like ES5... 
+- or you just really like ES5...
 
 Either way, this provides a pretty consistent way to define classes in JS so that when the time comes to switch to ES6, or coffeescript, or typescript, it will be fairly easy to change and will not require refactoring code (much).
 

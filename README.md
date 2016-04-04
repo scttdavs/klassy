@@ -87,7 +87,7 @@ var Bulldog = Dog.extend({
 
 var george = new Bulldog("George");
 george.getBreed() // Bulldog
-george.say() // I'm an animal
+Bulldog.say() // I'm an animal
 ```
 
 ### Super
@@ -108,6 +108,7 @@ var Dog = Animal.extend();
 
 var Bulldog = Dog.extend({
   getName: function() {
+    // do some stuff
     return this.super();
   }
 });

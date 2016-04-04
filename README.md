@@ -94,15 +94,15 @@ Bulldog.say() // I'm an animal
 
 ### Super
 
-Call the super class' method with `super`. NOTE: super will not work in strict mode as due to limitations in JS pre ES6, `function.caller` is needed but is disabled in strict mode.
+Call the super class' method with `super`, with the first argument being the method you are looking to access, and the rest being the arguments you want to pass it. NOTE: Super was done this way to avoid expensive wrappers for every method of every class, and also to avoid using `function.caller` as it is not in the official spec and does not work in strict mode. This method searches up the prototype chain and invokes the super class' method with the subclasses context (`this`);
 
 ```js
 var Animal = klassy({
   constructor: function(name) {
     this.name = name;
   },
-  getName: function() {
-    return this.name;
+  getName: function(surname) {
+    return surname + " " + this.name;
   }
 });
 
@@ -111,7 +111,7 @@ var Dog = Animal.extend();
 var Bulldog = Dog.extend({
   getName: function() {
     // do some stuff
-    return this.super();
+    return this.super("getName", "Mr.");
   }
 });
 

@@ -1,4 +1,4 @@
-
+'use strict;'
 
 var chai = require("chai");
 var expect = chai.expect;
@@ -53,7 +53,7 @@ var Bulldog = Dog.extend({
     this.breed = "Bulldog";
   },
   getCapsName: function() {
-    return this.super();
+    return this.super("getCapsName");
   }
 });
 
@@ -70,7 +70,7 @@ describe("Basics", function() {
   it("should create a klass", function() {
     var bill = new Person("Bill");
     var person = new Person();
-    
+
     expect(bill.say()).to.equal("Bill");
     expect(person.say()).to.equal("Person");
   });
@@ -120,12 +120,5 @@ describe("Super", function() {
 
     expect(Bulldog.say()).to.equal("animal");
     expect(george.getCapsName()).to.equal("GEORGE");
-  });
-
-  it("should not work in strict mode", function() {
-    'use strict';
-    var george = new Bulldog("George");
-
-    expect(george.getCapsName).to.throw(Error);
   });
 });

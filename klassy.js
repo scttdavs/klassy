@@ -81,12 +81,13 @@
     init.prototype = proto;
     init.extend = extendClass(init);
 
+    // define super on protoype, searches up the chain until it finds it and then returns THAT implementation
+    // no need to create expensive wrappers for every method.
     Object.defineProperty(init.prototype, "super", {
       get: function get() {
         var impl = get.caller;
         var name = impl._methodName;
-        var foundImpl = this[name] === impl;
-        var proto = this;        
+        var proto = this; // the instance that called super is 'this' here      
      
         while (proto = Object.getPrototypeOf(proto)) {
           if (!proto[name]) {
@@ -96,7 +97,7 @@
           }
         }
      
-        throw "`super` may not be called outside a method implementation";
+        throw "no `super` method was found!";
       }
     });
 

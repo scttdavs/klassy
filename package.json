@@ -4,7 +4,7 @@
   "description": "Bare bones vanilla js implementation of classes, influenced by coffeescript",
   "main": "klassy.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",

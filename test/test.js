@@ -121,4 +121,11 @@ describe("Super", function() {
     expect(Bulldog.say()).to.equal("animal");
     expect(george.getCapsName()).to.equal("GEORGE");
   });
+
+  it("should not work in strict mode", function() {
+    'use strict';
+    var george = new Bulldog("George");
+
+    expect(george.getCapsName).to.throw(Error);
+  });
 });

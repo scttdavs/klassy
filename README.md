@@ -20,12 +20,12 @@ Either way, this provides a pretty consistent way to define classes in JS so tha
 
 ### Constructors
 
-Simply pass a method in with the name `init` and it will behave as a constructor. The key `constructor` was avoided to prevent collisions with internal object constructors.
+Simply pass a method in with the name `constructor` and it will behave as a constructor.
 
 ```js
 var Person = klassy({
   name: "Person",
-  init: function(name) {
+  constructor: function(name) {
     if (name) {
       this.name = name;
     }    
@@ -44,7 +44,7 @@ Any method name beginning with `$` will be saved as a static method. This varies
 
 ```js
 var Person = klassy({
-  init: function(name) {
+  constructor: function(name) {
     this.name = name;
   },
   $talk: function() {
@@ -71,7 +71,7 @@ var Animal = klassy({
 });
 
 var Dog = Animal.extend({
-  init: function(breed) {
+  constructor: function(breed) {
     this.breed = breed;
   },
   getBreed: function() {
@@ -80,7 +80,7 @@ var Dog = Animal.extend({
 });
 
 var Bulldog = Dog.extend({
-  init: function() {
+  constructor: function() {
     this.breed = "Bulldog";
   }
 });
@@ -92,11 +92,11 @@ Bulldog.say() // I'm an animal
 
 ### Super
 
-Call the super class' method with `super`.
+Call the super class' method with `super`. NOTE: super will not work in strict mode as due to limitations in JS pre ES6, `function.caller` is needed but is disabled in strict mode.
 
 ```js
 var Animal = klassy({
-  init: function(name) {
+  constructor: function(name) {
     this.name = name;
   },
   getName: function() {

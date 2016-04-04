@@ -6,7 +6,7 @@ var klassy = require("../klassy");
 
 var Person = klassy({
   name: "Person",
-  init: function(name) {
+  constructor: function(name) {
     if (name) {
       this.name = name;
     }
@@ -20,7 +20,7 @@ var Person = klassy({
 });
 
 var Animal = klassy({
-  init: function(name) {
+  constructor: function(name) {
     this.name = name;
   },
   $say: function() {
@@ -35,7 +35,7 @@ var Animal = klassy({
 });
 
 var Dog = Animal.extend({
-  init: function(name, breed) {
+  constructor: function(name, breed) {
     this.name = name;
     this.breed = breed;
   },
@@ -48,7 +48,7 @@ var Dog = Animal.extend({
 });
 
 var Bulldog = Dog.extend({
-  init: function(name) {
+  constructor: function(name) {
     this.name = name;
     this.breed = "Bulldog";
   },

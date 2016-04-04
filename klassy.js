@@ -4,6 +4,8 @@
   else context[name] = definition()
 }('klassy', this, function () {
 
+  var CONSTRUCTOR = 'constructor';
+
   var isStaticKey = function(key) {
     return key.indexOf('$') === 0;
   };
@@ -19,7 +21,12 @@
     return typeof obj === 'function';
   }
 
+  var isNotConstructor = function(key) {
+    return key !== CONSTRUCTOR;
+  }
+
   var setName = function(fn, name) {
+    // makes 'super' possible since function.name is ES6
     if(isFunction(fn)) {
       fn._methodName = name;
     }
@@ -27,7 +34,7 @@
 
   var extendStatic = function(base, obj, fromParent) {
     for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (obj.hasOwnProperty(key) && isNotConstructor(key)) {
         // direct property
         if (isStaticKey(key) || fromParent) {
           var newKey = getStaticKey(key);
@@ -42,7 +49,7 @@
 
   var extend = function(base, obj) {
     for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (obj.hasOwnProperty(key) && isNotConstructor(key)) {
         // direct property
         base[key] = obj[key];
         setName(base[key], key);
@@ -58,15 +65,12 @@
 
   var klass = function(options, parent) {
     options = options || {};
-    var init = options.init;
+    var init = options.hasOwnProperty(CONSTRUCTOR) && options.constructor;
     var proto = Object.create((parent && parent.prototype) || {});
 
-    if (init) {
-      // delete init since options will be the prototype
-      delete options.init;
-    } else if (parent) {
+    if (!init && parent) {
       init = parent;
-    }  else {
+    } else if (!init) {
       // no init, so use a default
       init = function() {};
     }
@@ -86,6 +90,11 @@
     Object.defineProperty(init.prototype, "super", {
       get: function get() {
         var impl = get.caller;
+
+        if (impl === null) {
+          throw new Error("Super was called from global scope or you are in strict mode. Please turn off strict mode for super to work correctly");
+        }
+
         var name = impl._methodName;
         var proto = this; // the instance that called super is 'this' here      
      
@@ -97,7 +106,7 @@
           }
         }
      
-        throw "no `super` method was found!";
+        throw new Error("no `super` method was found!");
       }
     });
 

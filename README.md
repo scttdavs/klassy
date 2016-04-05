@@ -1,6 +1,7 @@
 # Klassy
 
 [![Build Status](https://travis-ci.org/scttdavs/klassy.svg?branch=master)](https://travis-ci.org/scttdavs/klassy)
+[![Coverage Status](https://coveralls.io/repos/github/scttdavs/klassy/badge.svg?branch=master)](https://coveralls.io/github/scttdavs/klassy?branch=master)
 
 A bare bones vanilla js implementation of classes, influenced by coffeescript.
 

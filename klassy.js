@@ -11,8 +11,12 @@
 		return key.indexOf('$') === 0;
   };
 
-  var getStaticKey = function(key) {
-		if (isStaticKey(key)) {
+  var isPrivateKey = function(key) {
+		return key.indexOf('_') === 0;
+  };
+
+  var getProcessedKey = function(key) {
+		if (isStaticKey(key) || isPrivateKey(key)) {
 		  return key.slice(1);
 		}
 		return key;
@@ -31,7 +35,7 @@
 		  if (obj.hasOwnProperty(key) && isNotConstructor(key)) {
 			// direct property
 			if (isStaticKey(key) || fromParent) {
-			  var newKey = getStaticKey(key);
+			  var newKey = getProcessedKey(key);
 			  base[newKey] = obj[key];
 			  if (isStaticKey(key)) {
 				delete obj[key];
@@ -56,6 +60,32 @@
 		};
   };
 
+  var makeNewConstructor = function(obj) {
+  	console.log(obj);
+  	var newC = "";
+  	for (var key in obj) {
+		  if (obj.hasOwnProperty(key)) {
+	  		if (isNotConstructor(key)) {
+	  			if (isFunction(obj[key])) {
+		  			newC += "var " + getProcessedKey(key) + " = " + obj[key].toString() + ";";
+	  			} else {
+	  				try {
+		  				newC += "var " + getProcessedKey(key) + " = " + JSON.stringify(obj[key]) + ";";
+		  			} catch(error) {
+		  				throw new Error("There was an error parsing this, functions in object literal?");
+		  			}
+	  			}
+
+	  		}
+	  		delete obj[key];
+		  }
+		}
+		return {
+			newC: new Function(newC).toString(), // jshint ignore:line
+			obj: obj
+		};
+  };
+
   var klass = function(options, parent) {
 		options = options || {};
 		var init = options.hasOwnProperty(CONSTRUCTOR) && options.constructor;
@@ -67,6 +97,9 @@
 		  // no init, so use a default
 		  init = function() {};
 		}
+
+		// make new constructor here
+		console.log(makeNewConstructor(options));
 
 		extendStatic(init, options);
 		extend(proto, options);

@@ -22,10 +22,6 @@
 		return key;
   };
 
-  var isFunction = function(obj) {
-		return typeof obj === 'function';
-  };
-
   var isNotConstructor = function(key) {
 		return key !== CONSTRUCTOR;
   };
@@ -124,9 +120,9 @@
 
 	    		while ((proto = Object.getPrototypeOf(proto))) {
 	    		  if (!proto[name]) {
-	    			continue;
+	    				continue;
 	    		  } else if (proto[name]) {
-	    			return proto[name].apply(this, args);
+	    				return proto[name].apply(this, args);
 	    		  }
 	    		}
 

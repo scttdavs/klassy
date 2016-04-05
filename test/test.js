@@ -1,4 +1,4 @@
-'use strict;'
+"use strict"; 
 
 var chai = require("chai");
 var expect = chai.expect;
@@ -52,25 +52,26 @@ var Bulldog = Dog.extend({
     this.name = name;
     this.breed = "Bulldog";
   },
-  getCapsName: function() {
-    return this.super("getCapsName");
+  getCapsName: function(name) {
+    return this.super(name);
   }
 });
+
+var george = new Bulldog("George");
+var lassie = new Dog("Lassie", "Collie");
+var bill = new Person("Bill");
+var person = new Person();
 
 
 describe("Basics", function() {
   it("should create a default", function() {
     var Person = klassy();
-    var bill = new Person();
 
     expect(Person).to.be.a("function");
     expect(bill).to.be.an("object");
   });
 
-  it("should create a klass", function() {
-    var bill = new Person("Bill");
-    var person = new Person();
-
+  it("should create a klass", function() {    
     expect(bill.say()).to.equal("Bill");
     expect(person.say()).to.equal("Person");
   });
@@ -78,9 +79,8 @@ describe("Basics", function() {
 
 describe("Static Methods", function() {
   it("should save a static method", function() {
-    var bill = new Person("Bill");
     expect(bill.talk).to.be.undefined;
-    expect(Person.talk()).to.equal("static")
+    expect(Person.talk()).to.equal("static");
   });
 });
 
@@ -98,16 +98,12 @@ describe("Subclassing", function() {
   });
 
   it("should extend another klass with overrides/new methods", function() {
-    var lassie = new Dog("Lassie", "Collie");
-
     expect(Dog.say()).to.equal("animal");
     expect(lassie.say).to.be.undefined;
     expect(lassie.getBreed()).to.equal("Collie");
   });
 
   it("should extend more than one klass", function() {
-    var george = new Bulldog("George");
-
     expect(Bulldog.say()).to.equal("animal");
     expect(george.getName()).to.equal("George");
     expect(george.getBreed()).to.equal("Bulldog");
@@ -116,9 +112,14 @@ describe("Subclassing", function() {
 
 describe("Super", function() {
   it("should work with super", function() {
-    var george = new Bulldog("George");
-
     expect(Bulldog.say()).to.equal("animal");
-    expect(george.getCapsName()).to.equal("GEORGE");
+    expect(george.getCapsName("getCapsName")).to.equal("GEORGE");
+  });
+
+  it("should throw an error when no super is found", function() {
+    var curry = function() {
+      george.getCapsName();
+    }
+    expect(curry).to.throw("no `super` method was found!");
   });
 });

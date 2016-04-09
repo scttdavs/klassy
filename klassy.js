@@ -15,6 +15,10 @@
 		return key.indexOf('_') === 0;
   };
 
+  var isFunction = function(obj) {
+		return typeof obj === 'function';
+  };
+
   var getProcessedKey = function(key) {
 		if (isStaticKey(key) || isPrivateKey(key)) {
 		  return key.slice(1);
@@ -56,28 +60,35 @@
 		};
   };
 
+  var addVariable = function(obj, key, isPrivateKey) {
+  	var prefix = isPrivateKey ? "var " : "this.";
+  	if (isFunction(obj[key])) {
+			return prefix + getProcessedKey(key) + " = " + obj[key].toString() + ";";
+		} else {
+			try {
+				return prefix + getProcessedKey(key) + " = " + JSON.stringify(obj[key]) + ";";
+			} catch(error) {
+				throw new Error("There was an error parsing this, functions in object literal?");
+			}
+		}
+  };
+
   var makeNewConstructor = function(obj) {
-  	console.log(obj);
   	var newC = "";
   	for (var key in obj) {
 		  if (obj.hasOwnProperty(key)) {
-	  		if (isNotConstructor(key)) {
-	  			if (isFunction(obj[key])) {
-		  			newC += "var " + getProcessedKey(key) + " = " + obj[key].toString() + ";";
+	  		if (isNotConstructor(key) && !isStaticKey(key)) {
+	  			if (isPrivateKey(key)) {
+	  				newC += addVariable(obj, key, true);
+	  				delete obj[key];
 	  			} else {
-	  				try {
-		  				newC += "var " + getProcessedKey(key) + " = " + JSON.stringify(obj[key]) + ";";
-		  			} catch(error) {
-		  				throw new Error("There was an error parsing this, functions in object literal?");
-		  			}
+	  				newC += addVariable(obj, key);
 	  			}
-
-	  		}
-	  		delete obj[key];
+	  		}		
 		  }
 		}
 		return {
-			newC: new Function(newC).toString(), // jshint ignore:line
+			newC: new Function(newC), // jshint ignore:line
 			obj: obj
 		};
   };
@@ -94,17 +105,28 @@
 		  init = function() {};
 		}
 
+		//console.log("OPTIONS", options);
 		// make new constructor here
-		console.log(makeNewConstructor(options));
+		var details = makeNewConstructor(options);
+		console.log("DETAILS: ", details);
+
+		init = details.newC;
+		options = details.obj;
+
+		//console.log("OPTIONS", options);
 
 		extendStatic(init, options);
 		extend(proto, options);
+
+		console.log("OPTIONS", options);
 
 		if (parent) {
 		  extendStatic(init, parent, true);
 		}
 
-		init.prototype = proto;
+		Object.setPrototypeOf(init, proto);
+		//init.prototype = proto;
+		//console.log("IS EXTENDABLE", Object.isExtensible(init));
 		init.extend = extendClass(init);
 
   	// define super on protoype, searches up the chain until it finds it and then returns THAT implementation
